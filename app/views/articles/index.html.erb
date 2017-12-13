@@ -1,0 +1,27 @@
+<%= link_to "All", articles_path %> |
+<%= link_to "Most_Viewed_Articles", articles_path(article_type: "most_viewed") %> |
+<%= link_to "Most_Liked_Articles", articles_path(article_type: "most_liked") %> | 
+<%= link_to "Most_Commented_Articles", articles_path(article_type: "most_commented") %>
+
+<% @articles.each_with_index do |article, i| %>
+  <div class="row">
+    <div class="col-sm-12">
+      <p><%= article["title"] %></p>
+      <div class="row">
+        <div class="col-sm-2">
+          Likes count: <%= Article.likes_count(article["id"]) %>
+        </div>
+        <div class="col-sm-2">
+          Views count: <%= Article.views_count(article["id"]) %>
+        </div>
+        <div class="col-sm-2">
+          Comments count: <%= Article.comments_count(article["id"]) %>
+        </div>
+        <div class="col-sm-6">
+          Tags: <%= Article.tag_names(article["id"]) %>
+        </div>
+      </div>
+    </div>
+    <hr />
+  </div>
+<% end %>
