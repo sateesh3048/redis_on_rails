@@ -7,7 +7,7 @@ Created redis.rb file inside config/initializers/redis.rb
 
   $redis = Redis::Namespace.new("rails_app", :redis => Redis.new)
 
-Update cache store in config/environments/developement/prodcution.rb
+Update cache store in config/environments/developement(or)/prodcution.rb
 ===============================================
 
     config.action_controller.perform_caching = true
@@ -102,6 +102,17 @@ Listing Articles Based on Likes Count, Views Count ..
       views_count.to_i
     end
 
+Performance monitoring :-
+=========================
+
+We can observe performance changes using 
+below gems.
+
+
+gem 'rack-mini-profiler'
+gem 'flamegraph'
+gem 'stackprof' 
+gem 'memory_profiler'
 
 
 
