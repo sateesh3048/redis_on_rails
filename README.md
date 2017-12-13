@@ -1,5 +1,19 @@
 Note: This project is created for learning redis usage.
 
+Redis configuration :-
+======================
+
+Created redis.rb file inside config/initializers/redis.rb
+
+  $redis = Redis::Namespace.new("rails_app", :redis => Redis.new)
+
+Update cache store in config/environments/developement/prodcution.rb
+===============================================
+
+    config.action_controller.perform_caching = true
+    config.cache_store = :redis_store, "redis://localhost:6379/0/cache", {expires_in: 90.minutes } 
+
+
 Redis String :-
 ==============
 
@@ -22,13 +36,15 @@ Redis Sets :-
 I have used redis sets to store all the tags related
 to articles.
 
-  def add_tag_to_article
-    $redis.sadd "article_#{article_id}_tag_names", self.tag.try(:name)
-  end
+Eg:-
 
-  def remove_tag_from_article
-    $redis.srem "article_#{article_id}_tag_names", self.tag.try(:name)
- end
+    def add_tag_to_article
+      $redis.sadd "article_#{article_id}_tag_names", self.tag.try(:name)
+    end
+
+    def remove_tag_from_article
+      $redis.srem "article_#{article_id}_tag_names", self.tag.try(:name)
+    end
 
 Redis Sorted Sets :
 =================== 
@@ -59,32 +75,32 @@ Eg:
 Listing Articles Based on Likes Count, Views Count ..
 ======================================================
 
-  def self.comments_count(article_id)
-    comments_count = $redis.zscore "article_comments_count", article_id
-    if comments_count.blank?
-      comments_count = Comment.where(article_id: article_id).count
-      $redis.zadd "article_comments_count", comments_count, article_id
+    def self.comments_count(article_id)
+      comments_count = $redis.zscore "article_comments_count", article_id
+      if comments_count.blank?
+        comments_count = Comment.where(article_id: article_id).count
+        $redis.zadd "article_comments_count", comments_count, article_id
+      end
+      comments_count.to_i
     end
-    comments_count.to_i
-  end
 
-  def self.likes_count(article_id)
-    likes_count = $redis.zscore "article_likes_count", article_id
-    if likes_count.blank?
-      likes_count = ArticleLiker.where(article_id: article_id).count
-      $redis.zadd "article_likes_count", likes_count, article_id
+    def self.likes_count(article_id)
+      likes_count = $redis.zscore "article_likes_count", article_id
+      if likes_count.blank?
+        likes_count = ArticleLiker.where(article_id: article_id).count
+        $redis.zadd "article_likes_count", likes_count, article_id
+      end
+      likes_count.to_i
     end
-    likes_count.to_i
-  end
 
-  def self.views_count(article_id)
-    views_count = $redis.zscore "article_viewers_count", article_id
-    if views_count.blank?
-      views_count = ArticleViewer.where(article_id: article_id).count
-      $redis.zadd "article_viewers_count", views_count, article_id
+    def self.views_count(article_id)
+      views_count = $redis.zscore "article_viewers_count", article_id
+      if views_count.blank?
+        views_count = ArticleViewer.where(article_id: article_id).count
+        $redis.zadd "article_viewers_count", views_count, article_id
+      end
+      views_count.to_i
     end
-    views_count.to_i
-  end
 
 
 
